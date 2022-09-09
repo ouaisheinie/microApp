@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>css隔离</title>
+</head>
+<body>
+  <div>
+    <p>Hello world</p>
+    <div id="shadow"></div>
+  </div>
+
+  <script>
+    // 添加一个影子dom 用于内外样式隔离
+    let shadowDom = shadow.attachShadow({
+      mode: "closed" // open 外界可以访问  closed 外界无法访问
+    })
+
+    let pElm = document.createElement('p')
+    pElm.innerHTML = 'hello zzy'
+    let styleElm = document.createElement('style')
+    styleElm.textContent = `
+      p {
+        color: red;
+      }
+    `
+    shadowDom.appendChild(pElm)
+    // 加入shadowDom中，hello zzy 为红色  不影响外面hello world
+    // shadowDom.appendChild(styleElm)
+
+    // 加入body中，hello world为红色， hello zzy不为红色
+    document.body.appendChild(styleElm)
+  </script>
+</body>
+</html>

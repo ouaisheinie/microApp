@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>es6 proxy js隔离</title>
+</head>
+<body>
+  <script>
+    class ProxySandbox {
+      constructor() {
+        const railWindow = window
+        const fakeWindow = {}
+        const proxy = new Proxy(fakeWindow, {
+          set (target, prop, value) {
+            target[prop] = value
+            return true
+          },
+          get (target, prop) {
+            return target[prop] || railWindow[prop] // 取不到代理window里的再去取真实window里的
+          }
+        })
+        this.proxy = proxy
+      }
+    }
+
+    let sandbox1 = new ProxySandbox()
+    let sandbox2 = new ProxySandbox()
+
+    window.a = 1
+
+    ((window) => {
+      window.a = 'hello'
+      console.log(window.a)
+    })(sandbox1.proxy)
+
+    ((window) => {
+      window.a = 'world'
+      console.log(window.a)
+    })(sandbox2.proxy)
+  </script>
+</body>
+</html>
